@@ -3,7 +3,7 @@ const fs = require('fs');
 const path = require('path');
 
 const baseDir = path.resolve(__dirname);
-const PORT = 3004; // Puerto exclusivo para Livorno's Pizza & Fast Food
+const PORT = 3004; // Puerto exclusivo para Pizzería Express
 
 const mimeTypes = {
   '.html': 'text/html; charset=UTF-8',
@@ -37,5 +37,5 @@ const server = http.createServer((req, res) => {
 });
 
 server.listen(PORT, () => {
-  console.log(`🍕 Servidor Livorno's activo en: http://localhost:${PORT}`);
+  console.log(`🍕 Servidor Pizzería Express activo en: http://localhost:${PORT}`);
 });
