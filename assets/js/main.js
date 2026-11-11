@@ -86,6 +86,10 @@ document.addEventListener('DOMContentLoaded', () => {
   const menuTabBtns = document.querySelectorAll('.menu-category-btn');
   const menuItems = document.querySelectorAll('.menu-card-item');
 
+  let PIZZAS_LIMIT = 4;
+  let pizzasExpanded = false;
+  let currentPizzaCategory = 'todos';
+
   menuTabBtns.forEach(btn => {
     btn.addEventListener('click', () => {
       menuTabBtns.forEach(b => {
@@ -95,19 +99,54 @@ document.addEventListener('DOMContentLoaded', () => {
       btn.classList.add('bg-brandRed', 'text-white', 'shadow-md', 'shadow-brandRed/30');
       btn.classList.remove('bg-zinc-100', 'text-zinc-600', 'hover:bg-zinc-200');
 
-      const targetCategory = btn.getAttribute('data-category');
-      menuItems.forEach(item => {
-        const itemCat = item.getAttribute('data-category');
-        if (targetCategory === 'todos' || itemCat === targetCategory) {
-          item.classList.remove('hidden');
-          item.classList.add('animate-fadeIn');
-        } else {
-          item.classList.add('hidden');
-          item.classList.remove('animate-fadeIn');
-        }
-      });
+      currentPizzaCategory = btn.getAttribute('data-category');
+      pizzasExpanded = false;
+      renderMenuWithLimit(currentPizzaCategory, PIZZAS_LIMIT);
     });
   });
+
+  function renderMenuWithLimit(category, limit) {
+    const toggleBtn = document.getElementById('toggle-pizzas-btn');
+    let visibleCount = 0;
+
+    menuItems.forEach(item => {
+      const itemCat = item.getAttribute('data-category');
+      const matchesCategory = category === 'todos' || itemCat === category;
+
+      if (!matchesCategory) {
+        item.classList.add('hidden');
+        item.classList.remove('animate-fadeIn');
+        return;
+      }
+
+      visibleCount++;
+      if (pizzasExpanded || visibleCount <= limit) {
+        item.classList.remove('hidden');
+        item.classList.add('animate-fadeIn');
+      } else {
+        item.classList.add('hidden');
+        item.classList.remove('animate-fadeIn');
+      }
+    });
+
+    if (toggleBtn) {
+      if (visibleCount <= PIZZAS_LIMIT) {
+        toggleBtn.classList.add('hidden');
+      } else {
+        toggleBtn.classList.remove('hidden');
+        toggleBtn.textContent = pizzasExpanded ? 'Ver menos' : 'Ver más';
+        toggleBtn.setAttribute('aria-expanded', pizzasExpanded);
+      }
+    }
+  }
+
+  const togglePizzasBtn = document.getElementById('toggle-pizzas-btn');
+  if (togglePizzasBtn) {
+    togglePizzasBtn.addEventListener('click', () => {
+      pizzasExpanded = !pizzasExpanded;
+      renderMenuWithLimit(currentPizzaCategory, PIZZAS_LIMIT);
+    });
+  }
 
   // ==========================================
   // 4. MODAL INTERACTIVO DE PEDIDO RÁPIDO
@@ -580,6 +619,8 @@ document.addEventListener('DOMContentLoaded', () => {
   // ==========================================
   // 9. FORMULARIO DE PEDIDO MODAL (quick-order-form ya está arriba)
   // ==========================================
+
+  renderMenuWithLimit('todos', PIZZAS_LIMIT);
 
   console.log("🍕 Pizzería Express - Landing Page cargada correctamente. Domicilios: +1 234 567 890");
   console.log("📸 Función RA disponible: Pizza en Tu Mesa con Cámara");
